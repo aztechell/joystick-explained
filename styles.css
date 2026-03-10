@@ -1,4 +1,5 @@
 :root {
+  --desktop-page-scale: 0.75;
   --bg-top: #f6f0d8;
   --bg-bottom: #dbe5cf;
   --panel: rgba(255, 250, 238, 0.86);
@@ -30,6 +31,11 @@
 html,
 body {
   min-height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -716,6 +722,11 @@ output {
 }
 
 @media (min-width: 760px) {
+  .app-shell {
+    zoom: var(--desktop-page-scale);
+    width: calc((100% - 1rem) / var(--desktop-page-scale));
+  }
+
   .joystick-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
