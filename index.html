@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP32 Joystick Explainer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <section class="file-warning" id="local-open-warning" hidden>
+      <strong>Local preview tip:</strong>
+      This page uses JavaScript modules. If you open <code>index.html</code> directly with <code>file://</code>,
+      some browsers block the scripts and the page looks static. Run <code>npm start</code> in this folder and open
+      <code>http://localhost:4173</code> instead.
+    </section>
+
+    <main class="page-content">
+        <div class="simulator-layout">
+          <div class="sim-top-grid">
+            <section class="card robot-card">
+              <div class="robot-stage">
+                <div class="robot-body">
+                  <div class="wheel wheel--front-left" data-wheel="frontLeft">
+                    <span class="wheel__label">FL</span>
+                    <strong class="wheel__value" data-wheel-value="frontLeft">0</strong>
+                  </div>
+                  <div class="wheel wheel--front-right" data-wheel="frontRight">
+                    <span class="wheel__label">FR</span>
+                    <strong class="wheel__value" data-wheel-value="frontRight">0</strong>
+                  </div>
+                  <div class="wheel wheel--rear-left" data-wheel="rearLeft">
+                    <span class="wheel__label">RL</span>
+                    <strong class="wheel__value" data-wheel-value="rearLeft">0</strong>
+                  </div>
+                  <div class="wheel wheel--rear-right" data-wheel="rearRight">
+                    <span class="wheel__label">RR</span>
+                    <strong class="wheel__value" data-wheel-value="rearRight">0</strong>
+                  </div>
+                  <div class="robot-core">
+                    <span class="robot-core__title">Robot</span>
+                    <span class="robot-core__mode" data-mix-mode-label>Standard mix</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="joystick-row">
+                <article class="joystick-card">
+                  <div class="mini-head">
+                    <h3>Move stick</h3>
+                    <p>Drag to set robot travel.</p>
+                  </div>
+                  <div class="joystick-pad" data-joystick="move" aria-label="Move joystick">
+                    <div class="joystick-pad__knob"></div>
+                  </div>
+                  <div class="raw-readout">
+                    <span>X <strong data-raw-readout="move-x">0</strong></span>
+                    <span>Y <strong data-raw-readout="move-y">0</strong></span>
+                  </div>
+                </article>
+
+                <article class="joystick-card">
+                  <div class="mini-head">
+                    <h3>Rotate stick</h3>
+                    <p>Drag to spin or lean the mix.</p>
+                  </div>
+                  <div class="joystick-pad" data-joystick="rotate" aria-label="Rotate joystick">
+                    <div class="joystick-pad__knob"></div>
+                  </div>
+                  <div class="raw-readout">
+                    <span>X <strong data-raw-readout="rotate-x">0</strong></span>
+                    <span>Y <strong data-raw-readout="rotate-y">0</strong></span>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="card sim-curves-card">
+              <div class="axis-picker" role="radiogroup" aria-label="Axis selector">
+                <button class="axis-picker__button is-active" data-axis="x" aria-pressed="true">Move X</button>
+                <button class="axis-picker__button" data-axis="y" aria-pressed="false">Move Y</button>
+                <button class="axis-picker__button" data-axis="rx" aria-pressed="false">Rotate X</button>
+                <button class="axis-picker__button" data-axis="ry" aria-pressed="false">Rotate Y</button>
+              </div>
+
+              <div class="chart-block">
+                <div class="mini-head">
+                  <h3>Wheel PWM sweep</h3>
+                  <p>Each colored line shows what happens to one wheel while the selected axis slides from -100 to 100.</p>
+                </div>
+                <canvas class="chart-canvas" id="wheel-curve" aria-label="Wheel pwm sweep"></canvas>
+                <div class="chart-axes">
+                  <span class="chart-axis-label"><strong>X:</strong> <span data-axis-label="wheel-x">Selected raw axis input (-100 to 100)</span></span>
+                  <span class="chart-axis-label"><strong>Y:</strong> <span data-axis-label="wheel-y">Wheel PWM output (-255 to 255)</span></span>
+                </div>
+              </div>
+
+              <div class="legend-row">
+                <button class="legend-pill legend-pill--front-left" type="button" data-wheel-toggle="frontLeft" aria-pressed="true">Front Left</button>
+                <button class="legend-pill legend-pill--front-right" type="button" data-wheel-toggle="frontRight" aria-pressed="true">Front Right</button>
+                <button class="legend-pill legend-pill--rear-left" type="button" data-wheel-toggle="rearLeft" aria-pressed="true">Rear Left</button>
+                <button class="legend-pill legend-pill--rear-right" type="button" data-wheel-toggle="rearRight" aria-pressed="true">Rear Right</button>
+              </div>
+            </section>
+
+            <section class="card settings-card">
+              <form class="settings-form" id="settings-form">
+                <div class="settings-group">
+                  <label class="switch-row" for="motorsEnabled">
+                    <span>Motors enabled</span>
+                    <input type="checkbox" id="motorsEnabled" data-setting="motorsEnabled">
+                  </label>
+
+                  <label class="field-row" for="mixMode">
+                    <span>Mix mode</span>
+                    <select id="mixMode" data-setting="mixMode">
+                      <option value="0">Standard</option>
+                      <option value="1">Alt (4-axis)</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="settings-group">
+                  <label class="field-row" for="maxSpeed">
+                    <span>Max speed</span>
+                    <div class="field-control">
+                      <input type="range" id="maxSpeed" min="0" max="100" step="1" data-setting="maxSpeed">
+                      <output for="maxSpeed" data-output="maxSpeed">100%</output>
+                    </div>
+                  </label>
+
+                  <label class="field-row" for="maxYaw">
+                    <span>Max yaw</span>
+                    <div class="field-control">
+                      <input type="range" id="maxYaw" min="0" max="100" step="1" data-setting="maxYaw">
+                      <output for="maxYaw" data-output="maxYaw">100%</output>
+                    </div>
+                  </label>
+
+                  <label class="field-row" for="deadzone">
+                    <span>Deadzone</span>
+                    <div class="field-control">
+                      <input type="range" id="deadzone" min="0" max="40" step="1" data-setting="deadzone">
+                      <output for="deadzone" data-output="deadzone">5%</output>
+                    </div>
+                  </label>
+
+                  <label class="field-row" for="expo">
+                    <span>Expo</span>
+                    <div class="field-control">
+                      <input type="range" id="expo" min="0" max="100" step="1" data-setting="expo">
+                      <output for="expo" data-output="expo">20%</output>
+                    </div>
+                  </label>
+
+                  <label class="field-row" for="minPwm">
+                    <span>Min PWM</span>
+                    <div class="field-control">
+                      <input type="range" id="minPwm" min="0" max="100" step="1" data-setting="minPwm">
+                      <output for="minPwm" data-output="minPwm">10%</output>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="settings-group">
+                  <h3>Axis flips</h3>
+                  <label class="switch-row" for="invertX">
+                    <span>Invert X</span>
+                    <input type="checkbox" id="invertX" data-setting="invertX">
+                  </label>
+                  <label class="switch-row" for="invertY">
+                    <span>Invert Y</span>
+                    <input type="checkbox" id="invertY" data-setting="invertY">
+                  </label>
+                  <label class="switch-row" for="invertR">
+                    <span>Invert R</span>
+                    <input type="checkbox" id="invertR" data-setting="invertR">
+                  </label>
+                </div>
+
+                <div class="settings-group">
+                  <h3>Motor reverse</h3>
+                  <label class="switch-row" for="motor-frontLeft">
+                    <span>Front left</span>
+                    <input type="checkbox" id="motor-frontLeft" data-motor-setting="frontLeft">
+                  </label>
+                  <label class="switch-row" for="motor-frontRight">
+                    <span>Front right</span>
+                    <input type="checkbox" id="motor-frontRight" data-motor-setting="frontRight">
+                  </label>
+                  <label class="switch-row" for="motor-rearLeft">
+                    <span>Rear left</span>
+                    <input type="checkbox" id="motor-rearLeft" data-motor-setting="rearLeft">
+                  </label>
+                  <label class="switch-row" for="motor-rearRight">
+                    <span>Rear right</span>
+                    <input type="checkbox" id="motor-rearRight" data-motor-setting="rearRight">
+                  </label>
+                </div>
+
+                <div class="settings-actions">
+                  <button class="reset-button" type="button" id="reset-settings">Reset to firmware defaults</button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
+    </main>
+  </div>
+
+  <script>
+    if (window.location.protocol === "file:") {
+      window.addEventListener("DOMContentLoaded", () => {
+        const warning = document.getElementById("local-open-warning");
+        if (warning) {
+          warning.hidden = false;
+        }
+      });
+    }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
