@@ -1,5 +1,4 @@
 :root {
-  --desktop-page-scale: 0.75;
   --bg-top: #f6f0d8;
   --bg-bottom: #dbe5cf;
   --panel: rgba(255, 250, 238, 0.86);
@@ -722,11 +721,6 @@ output {
 }
 
 @media (min-width: 760px) {
-  .app-shell {
-    zoom: var(--desktop-page-scale);
-    width: calc((100% - 1rem) / var(--desktop-page-scale));
-  }
-
   .joystick-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -738,6 +732,206 @@ output {
 
   .curves-layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1180px) {
+  .app-shell {
+    padding: 0.5rem 0 0.85rem;
+  }
+
+  .page-content {
+    margin-top: 0.2rem;
+  }
+
+  .simulator-layout {
+    --knob-size: 3.35rem;
+  }
+
+  .sim-top-grid {
+    grid-template-columns: minmax(23rem, 1fr) minmax(23rem, 1fr) minmax(18rem, 0.9fr);
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .card {
+    padding: 0.9rem;
+  }
+
+  .sim-top-grid > .card {
+    height: 100%;
+  }
+
+  .robot-body {
+    width: min(100%, clamp(24rem, 27.25vw, 29.5rem));
+  }
+
+  .wheel {
+    width: clamp(4.8rem, 4.8vw, 5.8rem);
+    height: clamp(4.8rem, 4.8vw, 5.8rem);
+    padding: 0.3rem;
+  }
+
+  .wheel--front-left,
+  .wheel--front-right {
+    top: 0.7rem;
+  }
+
+  .wheel--rear-left,
+  .wheel--rear-right {
+    bottom: 0.7rem;
+  }
+
+  .wheel--front-left,
+  .wheel--rear-left {
+    left: 0.7rem;
+  }
+
+  .wheel--front-right,
+  .wheel--rear-right {
+    right: 0.7rem;
+  }
+
+  .wheel__label {
+    font-size: 0.68rem;
+  }
+
+  .wheel__value {
+    font-size: 1.05rem;
+  }
+
+  .robot-core__title {
+    font-size: clamp(1.25rem, 2vw, 1.85rem);
+  }
+
+  .robot-core__mode {
+    font-size: 0.84rem;
+  }
+
+  .robot-card .joystick-row {
+    grid-template-columns: repeat(2, minmax(12rem, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.6rem;
+  }
+
+  .robot-card .joystick-card,
+  .settings-group {
+    padding: 0.8rem;
+  }
+
+  .robot-card .joystick-card {
+    width: auto;
+  }
+
+  .robot-card .joystick-pad {
+    max-width: clamp(6.7rem, 7.2vw, 8rem);
+    margin-top: 0.4rem;
+  }
+
+  .mini-head h3,
+  .settings-group h3 {
+    font-size: 1rem;
+  }
+
+  .robot-card .mini-head p,
+  .sim-curves-card .mini-head p,
+  .sim-curves-card .legend-row {
+    font-size: 0.84rem;
+    line-height: 1.3;
+  }
+
+  .raw-readout {
+    gap: 0.7rem;
+    margin-top: 0.45rem;
+    font-size: 0.86rem;
+  }
+
+  .axis-picker {
+    gap: 0.45rem;
+  }
+
+  .axis-picker__button {
+    padding: 0.5rem 0.72rem;
+    font-size: 0.82rem;
+  }
+
+  .chart-block {
+    margin-top: 0.55rem;
+  }
+
+  .robot-card {
+    justify-content: space-between;
+  }
+
+  .sim-curves-card,
+  .settings-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sim-curves-card .chart-block {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sim-curves-card .chart-canvas {
+    width: min(100%, clamp(24.75rem, 28.5vw, 30.7rem));
+    margin-inline: auto;
+  }
+
+  .chart-axes {
+    gap: 0.25rem;
+    margin-top: 0.45rem;
+    font-size: 0.82rem;
+  }
+
+  .legend-row {
+    gap: 0.45rem;
+    margin-top: 0.7rem;
+  }
+
+  .legend-pill {
+    padding: 0.36rem 0.62rem;
+    font-size: 0.78rem;
+  }
+
+  .settings-card {
+    font-size: 0.94rem;
+  }
+
+  .settings-form {
+    height: 100%;
+    gap: 0.65rem;
+  }
+
+  .settings-actions {
+    margin-top: auto;
+  }
+
+  .switch-row,
+  .field-row {
+    gap: 0.4rem;
+  }
+
+  .field-control {
+    gap: 0.55rem;
+  }
+
+  input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  output {
+    min-width: 3rem;
+    font-size: 0.88rem;
+  }
+
+  .reset-button {
+    width: 100%;
+    padding: 0.72rem 0.95rem;
+    font-size: 0.88rem;
   }
 }
 

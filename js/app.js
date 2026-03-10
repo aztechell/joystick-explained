@@ -70,9 +70,6 @@ const dom = {
       "invertR"
     ].map((key) => [key, document.querySelector(`[data-setting="${key}"]`)])
   ),
-  motorInputs: Object.fromEntries(
-    ["frontLeft", "frontRight", "rearLeft", "rearRight"].map((key) => [key, document.querySelector(`[data-motor-setting="${key}"]`)])
-  ),
   outputs: Object.fromEntries(
     ["maxSpeed", "maxYaw", "deadzone", "expo", "minPwm"].map((key) => [key, document.querySelector(`[data-output="${key}"]`)])
   ),
@@ -205,10 +202,6 @@ function renderSettings() {
     }
   }
 
-  for (const [key, input] of Object.entries(dom.motorInputs)) {
-    input.checked = state.settings.motorInvert[key];
-  }
-
   dom.outputs.maxSpeed.textContent = `${state.settings.maxSpeed}%`;
   dom.outputs.maxYaw.textContent = `${state.settings.maxYaw}%`;
   dom.outputs.deadzone.textContent = `${state.settings.deadzone}%`;
@@ -312,14 +305,6 @@ function initializeSettings() {
       const key = target.dataset.setting;
       updateSettings((next) => {
         next[key] = target.type === "checkbox" ? target.checked : Number(target.value);
-      });
-      return;
-    }
-
-    if (target.dataset.motorSetting) {
-      const key = target.dataset.motorSetting;
-      updateSettings((next) => {
-        next.motorInvert[key] = target.checked;
       });
     }
   });
